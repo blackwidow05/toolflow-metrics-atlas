@@ -62,7 +62,7 @@ function Heat({ rows, cols, get, rowLabel }: { rows: string[]; cols: string[]; g
               {cols.map((c) => {
                 const v = get(r, c);
                 return (
-                  <td key={c} className="heat-cell rounded text-center py-2" style={{ ["--heat" as string]: `${Math.round((v / max) * 100)}%` }}>
+                  <td key={c} className="heat-cell rounded text-center py-2" style={{ ["--heat" as string]: `${Math.round((v / max) * 55)}%` }}>
                     {v || "–"}
                   </td>
                 );
