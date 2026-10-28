@@ -123,11 +123,11 @@ function Overview() {
         </Panel>
 
         <Panel title="Transition matrix (A → B)" desc="Tool called directly after another tool">
-          <Heat rowLabel="from \ to" rows={[...M.TOOLS]} cols={[...M.TOOLS, "answer"]} get={(r, c) => M.transitionMatrix.find((x) => x.from === r)!.to[c]} />
+          <Heat rowLabel="from \ to" rows={[...M.TOOLS]} cols={[...M.TOOLS, "answer"]} get={(r, c) => M.transitionMatrix.find((x) => x.from === r)!.to[c] ?? 0} />
         </Panel>
 
         <Panel title="Tool co-occurrence" desc="Requests in which both tools were called">
-          <Heat rowLabel="" rows={[...M.TOOLS]} cols={[...M.TOOLS]} get={(r, c) => M.coOccurrence.find((x) => x.a === r)!.b[c]} />
+          <Heat rowLabel="" rows={[...M.TOOLS]} cols={[...M.TOOLS]} get={(r, c) => M.coOccurrence.find((x) => x.a === r)!.b[c] ?? 0} />
         </Panel>
 
         <Panel title="Tool distribution per iteration" desc="Calls per tool by agent iteration number" wide>
@@ -229,7 +229,7 @@ function DomainChart({ title, prefix, unit }: { title: string; prefix: string; u
       <ResponsiveContainer width="100%" height={240}>
         <LineChart data={data}>
           <CartesianGrid vertical={false} stroke="var(--border)" />
-          <XAxis dataKey="day" {...axis} /><YAxis {...axis} unit={unit} tickFormatter={fmt} />
+          <XAxis dataKey="day" {...axis} /><YAxis {...axis} unit={unit ?? ""} tickFormatter={fmt} />
           <Tooltip {...tip} /><Legend wrapperStyle={{ fontSize: 11 }} />
           {group === "domain"
             ? M.DOMAINS.map((d) => <Line key={d} dataKey={`${prefix}_${d}`} name={d} stroke={M.DOMAIN_COLORS[d]} strokeWidth={2} dot={false} />)
@@ -265,7 +265,7 @@ function Tools() {
           </Select>
         }
       >
-        <MinMaxAvg data={M.toolLatencyTrend} prefix={tool} color={M.TOOL_COLORS[tool]} height={280} />
+        <MinMaxAvg data={M.toolLatencyTrend} prefix={tool} color={M.TOOL_COLORS[tool] ?? "var(--primary)"} height={280} />
       </Panel>
 
       <Panel

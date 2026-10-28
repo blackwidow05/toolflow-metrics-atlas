@@ -29,7 +29,7 @@ const days = Array.from({ length: 14 }, (_, i) => {
   return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
 });
 
-export const toolCallTotals = TOOLS.map((t, i) => ({ tool: t, calls: [4820, 3110, 1980, 1240, 610][i] }));
+export const toolCallTotals = TOOLS.map((t, i) => ({ tool: t, calls: [4820, 3110, 1980, 1240, 610][i]! }));
 
 export const topSequences = [
   ["rag_search", "answer"],
@@ -42,7 +42,7 @@ export const topSequences = [
   ["metadata_agent", "sql_agent", "sql_agent", "answer"],
   ["sql_agent", "calculator", "answer"],
   ["rag_search", "sql_agent", "calculator", "answer"],
-].map((seq, i) => ({ seq, count: [1820, 1140, 860, 610, 420, 310, 240, 190, 150, 120][i] }));
+].map((seq, i) => ({ seq, count: [1820, 1140, 860, 610, 420, 310, 240, 190, 150, 120][i]! }));
 export const totalRequests = 6800;
 
 export const transitionMatrix = TOOLS.map((from) => ({
@@ -59,15 +59,15 @@ export const coOccurrence = TOOLS.map((a) => ({
 for (let i = 0; i < TOOLS.length; i++)
   for (let j = i + 1; j < TOOLS.length; j++) {
     const v = int(40, 1200);
-    coOccurrence[i].b[TOOLS[j]] = v;
-    coOccurrence[j].b[TOOLS[i]] = v;
+    coOccurrence[i]!.b[TOOLS[j]!] = v;
+    coOccurrence[j]!.b[TOOLS[i]!] = v;
   }
 
 export const toolsPerIteration = Array.from({ length: 6 }, (_, i) => {
   const decay = Math.pow(0.55, i);
   return {
     iteration: `#${i + 1}`,
-    ...Object.fromEntries(TOOLS.map((t, k) => [t, Math.round([3000, 1500, 1200, 600, 200][k] * decay * between(0.7, 1.3) * (k === 4 ? 1 + i * 0.6 : 1))])),
+    ...Object.fromEntries(TOOLS.map((t, k) => [t, Math.round([3000, 1500, 1200, 600, 200][k]! * decay * between(0.7, 1.3) * (k === 4 ? 1 + i * 0.6 : 1))])),
   };
 });
 
@@ -98,7 +98,7 @@ export const domainTrend = days.map((day) => {
 export const toolLatencyTrend = days.map((day) => {
   const row: Record<string, number | string> = { day };
   TOOLS.forEach((t, i) => {
-    const avg = [480, 2400, 1600, 900, 40][i] * between(0.8, 1.2);
+    const avg = [480, 2400, 1600, 900, 40][i]! * between(0.8, 1.2);
     row[`${t}_avg`] = Math.round(avg);
     row[`${t}_min`] = Math.round(avg * 0.3);
     row[`${t}_max`] = Math.round(avg * between(2, 3.5));
@@ -107,8 +107,8 @@ export const toolLatencyTrend = days.map((day) => {
 });
 
 export const toolTokens = TOOLS.map((t, i) => {
-  const avg = [3200, 2100, 1500, 2600, 120][i];
-  return { tool: t, avg, sum: avg * toolCallTotals[i].calls };
+  const avg = [3200, 2100, 1500, 2600, 120][i]!;
+  return { tool: t, avg, sum: avg * toolCallTotals[i]!.calls };
 });
 
 export const toolIterations = TOOLS.map((t) =>
@@ -118,6 +118,6 @@ export const toolIterations = TOOLS.map((t) =>
 );
 
 export const toolErrors = TOOLS.map((t, i) => {
-  const errors = [62, 141, 48, 77, 4][i];
-  return { tool: t, errors, rate: +((errors / toolCallTotals[i].calls) * 100).toFixed(2) };
+  const errors = [62, 141, 48, 77, 4][i]!;
+  return { tool: t, errors, rate: +((errors / toolCallTotals[i]!.calls) * 100).toFixed(2) };
 });
