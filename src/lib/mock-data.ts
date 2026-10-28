@@ -9,7 +9,7 @@ const int = (a: number, b: number) => Math.round(between(a, b));
 
 export const TOOLS = ["rag_search", "sql_agent", "metadata_agent", "web_search", "calculator"] as const;
 export const ITERATIVE_TOOLS = new Set(["sql_agent", "metadata_agent"]);
-export const DOMAINS = ["finance", "hr", "sales", "legal"] as const;
+export const DOMAINS = ["domain1", "domain2", "domain3", "domain4"] as const;
 export const TOOL_COLORS: Record<string, string> = {
   rag_search: "var(--chart-1)",
   sql_agent: "var(--chart-2)",
@@ -18,10 +18,10 @@ export const TOOL_COLORS: Record<string, string> = {
   calculator: "var(--chart-5)",
 };
 export const DOMAIN_COLORS: Record<string, string> = {
-  finance: "var(--chart-1)",
-  hr: "var(--chart-2)",
-  sales: "var(--chart-3)",
-  legal: "var(--chart-4)",
+  domain1: "var(--chart-1)",
+  domain2: "var(--chart-2)",
+  domain3: "var(--chart-3)",
+  domain4: "var(--chart-4)",
 };
 
 const days = Array.from({ length: 14 }, (_, i) => {
@@ -84,16 +84,12 @@ export const latencyTrend = days.map((day) => {
 });
 export const tokensTrend = days.map((day) => ({ day, input: int(1_800_000, 2_900_000), output: int(220_000, 420_000) }));
 
-export const domainTrend = days.map((day) => {
-  const row: Record<string, number | string> = { day };
-  DOMAINS.forEach((d, i) => {
-    row[`iter_${d}`] = +between(1.4 + i * 0.3, 2.2 + i * 0.4).toFixed(2);
-    row[`tokens_${d}`] = int(4000 + i * 1500, 7000 + i * 2500);
-    row[`tools_${d}`] = +between(1.2 + i * 0.2, 2.4 + i * 0.3).toFixed(2);
-    row[`llm_${d}`] = +between(2 + i * 0.3, 3.5 + i * 0.4).toFixed(2);
-  });
-  return row;
-});
+export const domainMetrics = [
+  { domain: DOMAINS[0], requestCount: 2400, avgIterations: 1.82, inputTokens: 10_800_000, outputTokens: 1_440_000, avgToolCalls: 1.52, avgLlmCalls: 2.34 },
+  { domain: DOMAINS[1], requestCount: 1800, avgIterations: 2.16, inputTokens: 9_180_000, outputTokens: 1_260_000, avgToolCalls: 1.83, avgLlmCalls: 2.71 },
+  { domain: DOMAINS[2], requestCount: 1500, avgIterations: 2.48, inputTokens: 8_100_000, outputTokens: 1_200_000, avgToolCalls: 1.97, avgLlmCalls: 3.06 },
+  { domain: DOMAINS[3], requestCount: 1100, avgIterations: 2.94, inputTokens: 6_490_000, outputTokens: 990_000, avgToolCalls: 1.70, avgLlmCalls: 3.42 },
+];
 
 export const toolLatencyTrend = days.map((day) => {
   const row: Record<string, number | string> = { day };
