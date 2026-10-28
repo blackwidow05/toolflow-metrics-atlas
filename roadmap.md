@@ -7,3 +7,4 @@
 - [x] Restrict every tool view to search, metadata agent, and sql agent.
 - [x] Replace the iterations table with a bar chart and verify the updated views.
 - [x] Drop the error-rate line from Errors per tool and verify the Tools view.
+- [x] Show Iterations per tool call numerically again and verify the Tools view.
