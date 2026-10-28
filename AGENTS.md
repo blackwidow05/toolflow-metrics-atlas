@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Keep deterministic domain-level demo aggregates in the shared mock-data module; charts consume one row per domain so counts, totals and averages use the same reporting period.
+- Derive weighted demo tokens and model/domain request allocations in the shared mock-data module; model counts must sum to each domain's request count so both views stay consistent.

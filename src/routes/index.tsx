@@ -31,7 +31,7 @@ const fmt = (n: number) => (n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `
 
 function Panel({ title, desc, children, action, wide }: { title: string; desc?: string; children: ReactNode; action?: ReactNode; wide?: boolean }) {
   return (
-    <section className={`rounded-xl border bg-card p-5 shadow-panel ${wide ? "lg:col-span-2" : ""}`}>
+    <section className={`min-w-0 rounded-xl border bg-card p-5 shadow-panel ${wide ? "lg:col-span-2" : ""}`}>
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <h3 className="font-display text-sm font-semibold tracking-tight">{title}</h3>
@@ -219,7 +219,7 @@ function DomainBar({ title, dataKey, color }: { title: string; dataKey: keyof (t
       <ResponsiveContainer width="100%" height={240}>
         <BarChart data={M.domainMetrics}>
           <CartesianGrid vertical={false} stroke="var(--border)" />
-          <XAxis dataKey="domain" {...axis} /><YAxis {...axis} tickFormatter={fmt} />
+          <XAxis dataKey="domain" {...axis} interval={0} angle={-35} textAnchor="end" height={55} /><YAxis {...axis} tickFormatter={fmt} />
           <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} />
           <Bar dataKey={dataKey} name={title} fill={color} radius={[4, 4, 0, 0]} />
         </BarChart>
@@ -237,7 +237,7 @@ function Domains() {
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={M.domainMetrics}>
             <CartesianGrid vertical={false} stroke="var(--border)" />
-            <XAxis dataKey="domain" {...axis} /><YAxis {...axis} tickFormatter={fmt} />
+            <XAxis dataKey="domain" {...axis} interval={0} angle={-35} textAnchor="end" height={55} /><YAxis {...axis} tickFormatter={fmt} />
             <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
             <Bar dataKey="inputTokens" name="input" stackId="tokens" fill="var(--chart-2)" />
             <Bar dataKey="outputTokens" name="output" stackId="tokens" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
@@ -246,6 +246,19 @@ function Domains() {
       </Panel>
       <DomainBar title="Avg tool calls per request" dataKey="avgToolCalls" color="var(--chart-4)" />
       <DomainBar title="Avg LLM calls per request" dataKey="avgLlmCalls" color="var(--chart-5)" />
+      <DomainBar title="Waighted token usage" dataKey="weightedTokens" color="var(--chart-3)" />
+      <Panel title="Requests by model and domain" wide>
+        <div className="overflow-x-auto">
+          <div className="min-w-[720px]">
+            <Heat rowLabel="model / domain" rows={[...M.MODELS]} cols={[...M.DOMAINS]} get={(model, domain) => M.modelDomainRequests.find((row) => row.model === model)?.domains[domain] ?? 0} />
+          </div>
+        </div>
+        <div className="mt-3 flex items-center justify-end gap-2 text-xs text-muted-foreground">
+          <span>Fewer requests</span>
+          {[0, 15, 30, 45, 55].map((heat) => <span key={heat} className="heat-cell h-3 w-6 rounded-sm" style={{ ["--heat" as string]: `${heat}%` }} />)}
+          <span>More requests</span>
+        </div>
+      </Panel>
     </div>
   );
 }
