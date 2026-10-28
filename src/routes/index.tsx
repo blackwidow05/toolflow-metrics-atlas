@@ -312,16 +312,14 @@ function Tools() {
         <p className="mt-2 font-mono text-xs text-muted-foreground">search: n/a</p>
       </Panel>
 
-      <Panel title="Errors per tool" desc="Count and error rate" wide>
+      <Panel title="Errors per tool" desc="Number of failed calls per tool" wide>
         <ResponsiveContainer width="100%" height={260}>
-          <ComposedChart data={M.toolErrors}>
+          <BarChart data={M.toolErrors}>
             <CartesianGrid vertical={false} stroke="var(--border)" />
-            <XAxis dataKey="tool" {...axis} />
-            <YAxis yAxisId="l" {...axis} /><YAxis yAxisId="r" orientation="right" {...axis} unit="%" />
-            <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
-            <Bar yAxisId="l" dataKey="errors" name="errors" fill="var(--destructive)" fillOpacity={0.8} radius={[4, 4, 0, 0]} />
-            <Line yAxisId="r" dataKey="rate" name="error rate %" stroke="var(--primary)" strokeWidth={2} />
-          </ComposedChart>
+            <XAxis dataKey="tool" {...axis} /><YAxis {...axis} />
+            <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} />
+            <Bar dataKey="errors" name="errors" fill="var(--destructive)" fillOpacity={0.8} radius={[4, 4, 0, 0]} />
+          </BarChart>
         </ResponsiveContainer>
       </Panel>
     </div>

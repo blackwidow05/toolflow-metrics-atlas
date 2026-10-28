@@ -6,3 +6,4 @@
 - [x] Verify token calculations and updated charts.
 - [x] Restrict every tool view to search, metadata agent, and sql agent.
 - [x] Replace the iterations table with a bar chart and verify the updated views.
+- [x] Drop the error-rate line from Errors per tool and verify the Tools view.
