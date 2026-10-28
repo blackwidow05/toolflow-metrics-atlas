@@ -8,3 +8,4 @@
 - [x] Replace the iterations table with a bar chart and verify the updated views.
 - [x] Drop the error-rate line from Errors per tool and verify the Tools view.
 - [x] Show Iterations per tool call numerically again and verify the Tools view.
+- [x] Remove the Tool co-occurrence panel and verify the Aggregated view.

@@ -126,9 +126,6 @@ function Overview() {
           <Heat rowLabel="from / to" rows={[...M.TOOLS]} cols={[...M.TOOLS, "answer"]} get={(r, c) => M.transitionMatrix.find((x) => x.from === r)?.to[c] ?? 0} />
         </Panel>
 
-        <Panel title="Tool co-occurrence" desc="Requests in which both tools were called">
-          <Heat rowLabel="" rows={[...M.TOOLS]} cols={[...M.TOOLS]} get={(r, c) => M.coOccurrence.find((x) => x.a === r)?.b[c] ?? 0} />
-        </Panel>
 
         <Panel title="Tool distribution per iteration" desc="Calls per tool by agent iteration number" wide>
           <ResponsiveContainer width="100%" height={280}>
