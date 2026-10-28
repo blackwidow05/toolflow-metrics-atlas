@@ -128,8 +128,11 @@ export const toolLatencyTrend = days.map((day) => {
 });
 
 export const toolTokens = TOOLS.map((t, i) => {
-  const avg = [3200, 2100, 1500, 2600, 120][i]!;
-  return { tool: t, avg, sum: avg * toolCallTotals[i]!.calls };
+  const avg = [3200, 2100, 1500, 2600, 120][i] ?? 0;
+  const inputAvg = [2200, 1400, 1000, 1800, 80][i] ?? 0;
+  const outputAvg = avg - inputAvg;
+  const calls = toolCallTotals[i]?.calls ?? 0;
+  return { tool: t, avg, sum: avg * calls, inputAvg, outputAvg, inputSum: inputAvg * calls, outputSum: outputAvg * calls };
 });
 
 export const toolIterations = TOOLS.map((t) =>

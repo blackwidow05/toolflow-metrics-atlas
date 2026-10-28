@@ -2,3 +2,5 @@
 - [x] Add illustrative Waighted token usage bar chart.
 - [x] Add numbered-model request-count heatmap by domain.
 - [x] Verify tests and the Domains view.
+- [ ] Unify chart colors and split tool tokens into input/output in both modes.
+- [ ] Verify token calculations and updated charts.
