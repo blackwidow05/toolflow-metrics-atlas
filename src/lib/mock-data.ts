@@ -104,6 +104,45 @@ export const domainMetrics = [
   { domain: DOMAINS[7], requestCount: 450, avgIterations: 2.63, inputTokens: 2_610_000, outputTokens: 405_000, avgToolCalls: 2.06, avgLlmCalls: 3.19 },
 ].map((row) => ({ ...row, weightedTokens: row.inputTokens + 3 * row.outputTokens }));
 
+// Split each day's token totals across domains by that domain's share of overall
+// token volume, so per-domain rows still sum to tokensTrend.
+function splitTotal(total: number, weights: number[]) {
+  const weightTotal = weights.reduce((sum, weight) => sum + weight, 0);
+  const parts: number[] = [];
+  let carry = 0;
+  let used = 0;
+  weights.forEach((weight, index) => {
+    if (index === weights.length - 1) {
+      parts.push(total - used);
+      return;
+    }
+    carry += (total * weight) / weightTotal;
+    const part = Math.floor(carry);
+    carry -= part;
+    used += part;
+    parts.push(part);
+  });
+  return parts;
+}
+
+const dailyTokenSplits = tokensTrend.map((row) => ({
+  day: row.day,
+  input: splitTotal(row.input, domainMetrics.map((domain) => domain.inputTokens)),
+  output: splitTotal(row.output, domainMetrics.map((domain) => domain.outputTokens)),
+}));
+
+export const tokensTrendByDomain = Object.fromEntries(
+  DOMAINS.map((domain, domainIndex) => [
+    domain,
+    dailyTokenSplits.map((row) => ({
+      day: row.day,
+      input: row.input[domainIndex] ?? 0,
+      output: row.output[domainIndex] ?? 0,
+    })),
+  ]),
+) as Record<string, { day: string; input: number; output: number }[]>;
+
+
 // Illustrative input weight 1, output weight 3. Allocate each domain's
 // requests across models deterministically, preserving its request total.
 export const modelDomainRequests = MODELS.map((model) => ({ model, domains: {} as Record<string, number> }));
