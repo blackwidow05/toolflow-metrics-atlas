@@ -31,7 +31,7 @@ const fmt = (n: number) => (n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `
 
 function Panel({ title, desc, children, action, wide }: { title: string; desc?: string; children: ReactNode; action?: ReactNode; wide?: boolean }) {
   return (
-    <section className={`rounded-xl border bg-card p-5 shadow-panel ${wide ? "lg:col-span-2" : ""}`}>
+    <section className={`min-w-0 rounded-xl border bg-card p-5 shadow-panel ${wide ? "lg:col-span-2" : ""}`}>
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <h3 className="font-display text-sm font-semibold tracking-tight">{title}</h3>

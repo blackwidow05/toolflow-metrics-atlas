@@ -1,4 +1,4 @@
 - [x] Expand domain comparisons to domain1–domain8.
 - [x] Add illustrative Waighted token usage bar chart.
 - [x] Add numbered-model request-count heatmap by domain.
-- [ ] Verify tests and the Domains view.
+- [x] Verify tests and the Domains view.
