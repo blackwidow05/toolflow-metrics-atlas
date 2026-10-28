@@ -138,7 +138,6 @@ function Overview() {
           </ResponsiveContainer>
         </Panel>
 
-
         <Panel title="Max-iterations hit rate" desc="% of requests that hit the iteration limit">
           <ResponsiveContainer width="100%" height={240}>
             <LineChart data={M.maxIterHitTrend}>
