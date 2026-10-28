@@ -123,11 +123,11 @@ function Overview() {
         </Panel>
 
         <Panel title="Transition matrix (A → B)" desc="Tool called directly after another tool">
-          <Heat rowLabel="from \ to" rows={[...M.TOOLS]} cols={[...M.TOOLS, "answer"]} get={(r, c) => M.transitionMatrix.find((x) => x.from === r)!.to[c] ?? 0} />
+          <Heat rowLabel="from / to" rows={[...M.TOOLS]} cols={[...M.TOOLS, "answer"]} get={(r, c) => M.transitionMatrix.find((x) => x.from === r)?.to[c] ?? 0} />
         </Panel>
 
         <Panel title="Tool co-occurrence" desc="Requests in which both tools were called">
-          <Heat rowLabel="" rows={[...M.TOOLS]} cols={[...M.TOOLS]} get={(r, c) => M.coOccurrence.find((x) => x.a === r)!.b[c] ?? 0} />
+          <Heat rowLabel="" rows={[...M.TOOLS]} cols={[...M.TOOLS]} get={(r, c) => M.coOccurrence.find((x) => x.a === r)?.b[c] ?? 0} />
         </Panel>
 
         <Panel title="Tool distribution per iteration" desc="Calls per tool by agent iteration number" wide>
@@ -300,20 +300,16 @@ function Tools() {
       </Panel>
 
       <Panel title="Iterations per tool call" desc="Iterative tools only (agentic SQL / metadata)">
-        <table className="w-full text-sm">
-          <thead className="text-xs text-muted-foreground">
-            <tr><th className="pb-2 text-left font-normal">Tool</th><th className="pb-2 text-right font-normal">Avg iterations</th><th className="pb-2 text-right font-normal">Most common iteration</th></tr>
-          </thead>
-          <tbody className="font-mono text-xs">
-            {M.toolIterations.map((r) => (
-              <tr key={r.tool} className="border-t">
-                <td className="py-2.5">{r.tool}</td>
-                <td className={`text-right ${r.avgIterations == null ? "text-muted-foreground" : ""}`}>{r.avgIterations ?? "n/a"}</td>
-                <td className={`text-right ${r.modeIteration == null ? "text-muted-foreground" : ""}`}>{r.modeIteration ? `#${r.modeIteration}` : "n/a"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ResponsiveContainer width="100%" height={240}>
+          <BarChart data={M.toolIterations.filter((row) => row.avgIterations !== null)}>
+            <CartesianGrid vertical={false} stroke="var(--border)" />
+            <XAxis dataKey="tool" {...axis} interval={0} /><YAxis {...axis} />
+            <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
+            <Bar dataKey="avgIterations" name="Avg iterations" fill="var(--primary)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="modeIteration" name="Most common iteration" fill="var(--chart-3)" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+        <p className="mt-2 font-mono text-xs text-muted-foreground">search: n/a</p>
       </Panel>
 
       <Panel title="Errors per tool" desc="Count and error rate" wide>

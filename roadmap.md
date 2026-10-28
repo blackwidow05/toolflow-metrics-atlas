@@ -4,3 +4,5 @@
 - [x] Verify tests and the Domains view.
 - [x] Unify chart colors and split tool tokens into input/output in both modes.
 - [x] Verify token calculations and updated charts.
+- [x] Restrict every tool view to search, metadata agent, and sql agent.
+- [x] Replace the iterations table with a bar chart and verify the updated views.
