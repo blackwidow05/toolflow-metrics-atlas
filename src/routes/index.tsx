@@ -158,7 +158,7 @@ function Overview() {
               <CartesianGrid vertical={false} stroke="var(--border)" />
               <XAxis dataKey="day" {...axis} /><YAxis {...axis} unit="%" />
               <Tooltip {...tip} />
-              <Line dataKey="pct" stroke="var(--chart-4)" strokeWidth={2} dot={false} />
+              <Line dataKey="pct" stroke="var(--primary)" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </Panel>
@@ -171,8 +171,8 @@ function Overview() {
               <CartesianGrid vertical={false} stroke="var(--border)" />
               <XAxis dataKey="day" {...axis} /><YAxis {...axis} tickFormatter={fmt} />
               <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="input" stackId="t" fill="var(--chart-2)" />
-              <Bar dataKey="output" stackId="t" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="input" stackId="t" fill="var(--token-input)" />
+              <Bar dataKey="output" stackId="t" fill="var(--token-output)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Panel>
@@ -208,12 +208,12 @@ function LatencyPanel() {
         </Tabs>
       }
     >
-      <MinMaxAvg data={M.latencyTrend} prefix={metric} color={metric === "rag" ? "var(--chart-2)" : "var(--chart-1)"} />
+      <MinMaxAvg data={M.latencyTrend} prefix={metric} color="var(--primary)" />
     </Panel>
   );
 }
 
-function DomainBar({ title, dataKey, color }: { title: string; dataKey: keyof (typeof M.domainMetrics)[number]; color: string }) {
+function DomainBar({ title, dataKey }: { title: string; dataKey: keyof (typeof M.domainMetrics)[number] }) {
   return (
     <Panel title={title}>
       <ResponsiveContainer width="100%" height={240}>
@@ -221,7 +221,7 @@ function DomainBar({ title, dataKey, color }: { title: string; dataKey: keyof (t
           <CartesianGrid vertical={false} stroke="var(--border)" />
           <XAxis dataKey="domain" {...axis} interval={0} angle={-35} textAnchor="end" height={55} /><YAxis {...axis} tickFormatter={fmt} />
           <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} />
-          <Bar dataKey={dataKey} name={title} fill={color} radius={[4, 4, 0, 0]} />
+          <Bar dataKey={dataKey} name={title} fill="var(--primary)" radius={[4, 4, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </Panel>
@@ -231,22 +231,22 @@ function DomainBar({ title, dataKey, color }: { title: string; dataKey: keyof (t
 function Domains() {
   return (
     <div className="grid gap-4 lg:grid-cols-2">
-      <DomainBar title="Request count" dataKey="requestCount" color="var(--primary)" />
-      <DomainBar title="Avg iterations per request" dataKey="avgIterations" color="var(--chart-3)" />
+      <DomainBar title="Request count" dataKey="requestCount" />
+      <DomainBar title="Avg iterations per request" dataKey="avgIterations" />
       <Panel title="Token usage" desc="Input and output tokens per domain">
         <ResponsiveContainer width="100%" height={240}>
           <BarChart data={M.domainMetrics}>
             <CartesianGrid vertical={false} stroke="var(--border)" />
             <XAxis dataKey="domain" {...axis} interval={0} angle={-35} textAnchor="end" height={55} /><YAxis {...axis} tickFormatter={fmt} />
             <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
-            <Bar dataKey="inputTokens" name="input" stackId="tokens" fill="var(--chart-2)" />
-            <Bar dataKey="outputTokens" name="output" stackId="tokens" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="inputTokens" name="input" stackId="tokens" fill="var(--token-input)" />
+            <Bar dataKey="outputTokens" name="output" stackId="tokens" fill="var(--token-output)" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </Panel>
-      <DomainBar title="Avg tool calls per request" dataKey="avgToolCalls" color="var(--chart-4)" />
-      <DomainBar title="Avg LLM calls per request" dataKey="avgLlmCalls" color="var(--chart-5)" />
-      <DomainBar title="Waighted token usage" dataKey="weightedTokens" color="var(--chart-3)" />
+      <DomainBar title="Avg tool calls per request" dataKey="avgToolCalls" />
+      <DomainBar title="Avg LLM calls per request" dataKey="avgLlmCalls" />
+      <DomainBar title="Waighted token usage" dataKey="weightedTokens" />
       <Panel title="Requests by model and domain" wide>
         <div className="overflow-x-auto">
           <div className="min-w-[720px]">
@@ -277,11 +277,11 @@ function Tools() {
           </Select>
         }
       >
-        <MinMaxAvg data={M.toolLatencyTrend} prefix={tool} color={M.TOOL_COLORS[tool] ?? "var(--primary)"} height={280} />
+        <MinMaxAvg data={M.toolLatencyTrend} prefix={tool} color="var(--primary)" height={280} />
       </Panel>
 
       <Panel
-        title="Token usage per tool" desc="Arguments + result injected into context"
+        title="Token usage per tool" desc="Input and output tokens per tool"
         action={
           <Tabs value={tokMode} onValueChange={(v) => setTokMode(v as "avg" | "sum")}>
             <TabsList className="h-8"><TabsTrigger value="avg" className="text-xs">Avg / call</TabsTrigger><TabsTrigger value="sum" className="text-xs">Sum</TabsTrigger></TabsList>
@@ -292,8 +292,9 @@ function Tools() {
           <BarChart data={M.toolTokens} layout="vertical">
             <CartesianGrid horizontal={false} stroke="var(--border)" />
             <XAxis type="number" {...axis} tickFormatter={fmt} /><YAxis type="category" dataKey="tool" {...axis} width={110} />
-            <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} />
-            <Bar dataKey={tokMode} radius={[0, 4, 4, 0]} fill="var(--chart-2)" />
+            <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
+            <Bar dataKey={tokMode === "avg" ? "inputAvg" : "inputSum"} name="input" stackId="tokens" fill="var(--token-input)" />
+            <Bar dataKey={tokMode === "avg" ? "outputAvg" : "outputSum"} name="output" stackId="tokens" radius={[0, 4, 4, 0]} fill="var(--token-output)" />
           </BarChart>
         </ResponsiveContainer>
       </Panel>
@@ -323,7 +324,7 @@ function Tools() {
             <YAxis yAxisId="l" {...axis} /><YAxis yAxisId="r" orientation="right" {...axis} unit="%" />
             <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
             <Bar yAxisId="l" dataKey="errors" name="errors" fill="var(--destructive)" fillOpacity={0.8} radius={[4, 4, 0, 0]} />
-            <Line yAxisId="r" dataKey="rate" name="error rate %" stroke="var(--foreground)" strokeWidth={2} />
+            <Line yAxisId="r" dataKey="rate" name="error rate %" stroke="var(--primary)" strokeWidth={2} />
           </ComposedChart>
         </ResponsiveContainer>
       </Panel>
