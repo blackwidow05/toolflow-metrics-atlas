@@ -9,3 +9,4 @@
 - [x] Drop the error-rate line from Errors per tool and verify the Tools view.
 - [x] Show Iterations per tool call numerically again and verify the Tools view.
 - [x] Remove the Tool co-occurrence panel and verify the Aggregated view.
+- [x] Remove the tool-errors trend chart and close the gaps it leaves in the Aggregated view.
