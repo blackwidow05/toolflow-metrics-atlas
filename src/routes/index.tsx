@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
-  Area, AreaChart, Bar, BarChart, CartesianGrid, ComposedChart, Legend, Line, LineChart,
+  Area, Bar, BarChart, CartesianGrid, ComposedChart, Legend, Line, LineChart,
   ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -126,6 +126,17 @@ function Overview() {
           <Heat rowLabel="from / to" rows={[...M.TOOLS]} cols={[...M.TOOLS, "answer"]} get={(r, c) => M.transitionMatrix.find((x) => x.from === r)?.to[c] ?? 0} />
         </Panel>
 
+        <Panel title="Token usage — total" desc="Input vs output tokens per day">
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={M.tokensTrend}>
+              <CartesianGrid vertical={false} stroke="var(--border)" />
+              <XAxis dataKey="day" {...axis} /><YAxis {...axis} tickFormatter={fmt} />
+              <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="input" stackId="t" fill="var(--token-input)" />
+              <Bar dataKey="output" stackId="t" fill="var(--token-output)" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Panel>
 
         <Panel title="Tool distribution per iteration" desc="Calls per tool by agent iteration number" wide>
           <ResponsiveContainer width="100%" height={280}>
@@ -135,17 +146,6 @@ function Overview() {
               <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
               {M.TOOLS.map((t) => <Bar key={t} dataKey={t} stackId="a" fill={M.TOOL_COLORS[t]} />)}
             </BarChart>
-          </ResponsiveContainer>
-        </Panel>
-
-        <Panel title="Tool errors over time">
-          <ResponsiveContainer width="100%" height={240}>
-            <AreaChart data={M.errorsTrend}>
-              <CartesianGrid vertical={false} stroke="var(--border)" />
-              <XAxis dataKey="day" {...axis} /><YAxis {...axis} />
-              <Tooltip {...tip} />
-              <Area dataKey="errors" stroke="var(--destructive)" fill="var(--destructive)" fillOpacity={0.15} />
-            </AreaChart>
           </ResponsiveContainer>
         </Panel>
 
@@ -161,18 +161,6 @@ function Overview() {
         </Panel>
 
         <LatencyPanel />
-
-        <Panel title="Token usage — total" desc="Input vs output tokens per day">
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={M.tokensTrend}>
-              <CartesianGrid vertical={false} stroke="var(--border)" />
-              <XAxis dataKey="day" {...axis} /><YAxis {...axis} tickFormatter={fmt} />
-              <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="input" stackId="t" fill="var(--token-input)" />
-              <Bar dataKey="output" stackId="t" fill="var(--token-output)" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </Panel>
       </div>
     </div>
   );
