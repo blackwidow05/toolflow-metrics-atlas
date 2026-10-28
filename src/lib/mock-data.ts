@@ -9,7 +9,8 @@ const int = (a: number, b: number) => Math.round(between(a, b));
 
 export const TOOLS = ["rag_search", "sql_agent", "metadata_agent", "web_search", "calculator"] as const;
 export const ITERATIVE_TOOLS = new Set(["sql_agent", "metadata_agent"]);
-export const DOMAINS = ["domain1", "domain2", "domain3", "domain4"] as const;
+export const DOMAINS = ["domain1", "domain2", "domain3", "domain4", "domain5", "domain6", "domain7", "domain8"] as const;
+export const MODELS = ["model1", "model2", "model3", "model4", "model5", "model6", "model7", "model8"] as const;
 export const TOOL_COLORS: Record<string, string> = {
   rag_search: "var(--chart-1)",
   sql_agent: "var(--chart-2)",
@@ -22,6 +23,10 @@ export const DOMAIN_COLORS: Record<string, string> = {
   domain2: "var(--chart-2)",
   domain3: "var(--chart-3)",
   domain4: "var(--chart-4)",
+  domain5: "var(--chart-5)",
+  domain6: "var(--chart-1)",
+  domain7: "var(--chart-2)",
+  domain8: "var(--chart-3)",
 };
 
 const days = Array.from({ length: 14 }, (_, i) => {
@@ -85,11 +90,31 @@ export const latencyTrend = days.map((day) => {
 export const tokensTrend = days.map((day) => ({ day, input: int(1_800_000, 2_900_000), output: int(220_000, 420_000) }));
 
 export const domainMetrics = [
-  { domain: DOMAINS[0], requestCount: 2400, avgIterations: 1.82, inputTokens: 10_800_000, outputTokens: 1_440_000, avgToolCalls: 1.52, avgLlmCalls: 2.34 },
-  { domain: DOMAINS[1], requestCount: 1800, avgIterations: 2.16, inputTokens: 9_180_000, outputTokens: 1_260_000, avgToolCalls: 1.83, avgLlmCalls: 2.71 },
-  { domain: DOMAINS[2], requestCount: 1500, avgIterations: 2.48, inputTokens: 8_100_000, outputTokens: 1_200_000, avgToolCalls: 1.97, avgLlmCalls: 3.06 },
-  { domain: DOMAINS[3], requestCount: 1100, avgIterations: 2.94, inputTokens: 6_490_000, outputTokens: 990_000, avgToolCalls: 1.70, avgLlmCalls: 3.42 },
-];
+  { domain: DOMAINS[0], requestCount: 1400, avgIterations: 1.82, inputTokens: 6_300_000, outputTokens: 840_000, avgToolCalls: 1.52, avgLlmCalls: 2.34 },
+  { domain: DOMAINS[1], requestCount: 1100, avgIterations: 2.16, inputTokens: 5_610_000, outputTokens: 770_000, avgToolCalls: 1.83, avgLlmCalls: 2.71 },
+  { domain: DOMAINS[2], requestCount: 1000, avgIterations: 2.48, inputTokens: 5_400_000, outputTokens: 800_000, avgToolCalls: 1.97, avgLlmCalls: 3.06 },
+  { domain: DOMAINS[3], requestCount: 900, avgIterations: 2.94, inputTokens: 5_310_000, outputTokens: 810_000, avgToolCalls: 1.70, avgLlmCalls: 3.42 },
+  { domain: DOMAINS[4], requestCount: 750, avgIterations: 2.05, inputTokens: 3_600_000, outputTokens: 525_000, avgToolCalls: 1.61, avgLlmCalls: 2.52 },
+  { domain: DOMAINS[5], requestCount: 650, avgIterations: 3.12, inputTokens: 4_030_000, outputTokens: 650_000, avgToolCalls: 2.24, avgLlmCalls: 3.81 },
+  { domain: DOMAINS[6], requestCount: 550, avgIterations: 1.67, inputTokens: 2_255_000, outputTokens: 275_000, avgToolCalls: 1.38, avgLlmCalls: 2.08 },
+  { domain: DOMAINS[7], requestCount: 450, avgIterations: 2.63, inputTokens: 2_610_000, outputTokens: 405_000, avgToolCalls: 2.06, avgLlmCalls: 3.19 },
+].map((row) => ({ ...row, weightedTokens: row.inputTokens + 3 * row.outputTokens }));
+
+// Illustrative input weight 1, output weight 3. Allocate each domain's
+// requests across models deterministically, preserving its request total.
+export const modelDomainRequests = MODELS.map((model) => ({ model, domains: {} as Record<string, number> }));
+domainMetrics.forEach((domain, domainIndex) => {
+  const weights = MODELS.map((_, modelIndex) => 1 + ((modelIndex * 3 + domainIndex * 5) % 11));
+  const weightTotal = weights.reduce((sum, weight) => sum + weight, 0);
+  let allocated = 0;
+  modelDomainRequests.forEach((row, modelIndex) => {
+    const requests = modelIndex === MODELS.length - 1
+      ? domain.requestCount - allocated
+      : Math.floor(domain.requestCount * (weights[modelIndex] ?? 1) / weightTotal);
+    row.domains[domain.domain] = requests;
+    allocated += requests;
+  });
+});
 
 export const toolLatencyTrend = days.map((day) => {
   const row: Record<string, number | string> = { day };
