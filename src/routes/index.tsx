@@ -213,28 +213,16 @@ function LatencyPanel() {
   );
 }
 
-function DomainChart({ title, prefix, unit }: { title: string; prefix: string; unit?: string }) {
-  const [group, setGroup] = useState<"domain" | "all">("domain");
-  const data = M.domainTrend.map((r) => ({ ...r, all: +(M.DOMAINS.reduce((a, d) => a + (r[`${prefix}_${d}`] as number), 0) / M.DOMAINS.length).toFixed(2) }));
+function DomainBar({ title, dataKey, color }: { title: string; dataKey: keyof (typeof M.domainMetrics)[number]; color: string }) {
   return (
-    <Panel
-      title={title}
-      action={
-        <Select value={group} onValueChange={(v) => setGroup(v as "domain" | "all")}>
-          <SelectTrigger className="h-8 w-[130px] text-xs"><SelectValue /></SelectTrigger>
-          <SelectContent><SelectItem value="domain">Group: domain</SelectItem><SelectItem value="all">No grouping</SelectItem></SelectContent>
-        </Select>
-      }
-    >
+    <Panel title={title}>
       <ResponsiveContainer width="100%" height={240}>
-        <LineChart data={data}>
+        <BarChart data={M.domainMetrics}>
           <CartesianGrid vertical={false} stroke="var(--border)" />
-          <XAxis dataKey="day" {...axis} /><YAxis {...axis} unit={unit ?? ""} tickFormatter={fmt} />
-          <Tooltip {...tip} /><Legend wrapperStyle={{ fontSize: 11 }} />
-          {group === "domain"
-            ? M.DOMAINS.map((d) => <Line key={d} dataKey={`${prefix}_${d}`} name={d} stroke={M.DOMAIN_COLORS[d]} strokeWidth={2} dot={false} />)
-            : <Line dataKey="all" name="all domains" stroke="var(--primary)" strokeWidth={2} dot={false} />}
-        </LineChart>
+          <XAxis dataKey="domain" {...axis} /><YAxis {...axis} tickFormatter={fmt} />
+          <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} />
+          <Bar dataKey={dataKey} name={title} fill={color} radius={[4, 4, 0, 0]} />
+        </BarChart>
       </ResponsiveContainer>
     </Panel>
   );
@@ -243,10 +231,21 @@ function DomainChart({ title, prefix, unit }: { title: string; prefix: string; u
 function Domains() {
   return (
     <div className="grid gap-4 lg:grid-cols-2">
-      <DomainChart title="Avg iterations per request" prefix="iter" />
-      <DomainChart title="Avg tokens per request" prefix="tokens" />
-      <DomainChart title="Avg tool calls per request" prefix="tools" />
-      <DomainChart title="Avg LLM calls per request" prefix="llm" />
+      <DomainBar title="Request count" dataKey="requestCount" color="var(--primary)" />
+      <DomainBar title="Avg iterations per request" dataKey="avgIterations" color="var(--chart-3)" />
+      <Panel title="Token usage" desc="Input and output tokens per domain">
+        <ResponsiveContainer width="100%" height={240}>
+          <BarChart data={M.domainMetrics}>
+            <CartesianGrid vertical={false} stroke="var(--border)" />
+            <XAxis dataKey="domain" {...axis} /><YAxis {...axis} tickFormatter={fmt} />
+            <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
+            <Bar dataKey="inputTokens" name="input" stackId="tokens" fill="var(--chart-2)" />
+            <Bar dataKey="outputTokens" name="output" stackId="tokens" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+      </Panel>
+      <DomainBar title="Avg tool calls per request" dataKey="avgToolCalls" color="var(--chart-4)" />
+      <DomainBar title="Avg LLM calls per request" dataKey="avgLlmCalls" color="var(--chart-5)" />
     </div>
   );
 }

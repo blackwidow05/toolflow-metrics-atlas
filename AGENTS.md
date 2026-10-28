@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep deterministic domain-level demo aggregates in the shared mock-data module; charts consume one row per domain so counts, totals and averages use the same reporting period.
