@@ -138,7 +138,6 @@ function Overview() {
           </ResponsiveContainer>
         </Panel>
 
-
         <Panel title="Tool distribution per iteration" desc="Calls per tool by agent iteration number" wide>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={M.toolsPerIteration}>
@@ -162,18 +161,6 @@ function Overview() {
         </Panel>
 
         <LatencyPanel />
-
-        <Panel title="Token usage — total" desc="Input vs output tokens per day">
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={M.tokensTrend}>
-              <CartesianGrid vertical={false} stroke="var(--border)" />
-              <XAxis dataKey="day" {...axis} /><YAxis {...axis} tickFormatter={fmt} />
-              <Tooltip {...tip} cursor={{ fill: "var(--muted)" }} /><Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="input" stackId="t" fill="var(--token-input)" />
-              <Bar dataKey="output" stackId="t" fill="var(--token-output)" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </Panel>
       </div>
     </div>
   );
