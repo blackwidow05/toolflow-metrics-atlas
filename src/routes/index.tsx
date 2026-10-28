@@ -138,16 +138,6 @@ function Overview() {
           </ResponsiveContainer>
         </Panel>
 
-        <Panel title="Tool errors over time">
-          <ResponsiveContainer width="100%" height={240}>
-            <AreaChart data={M.errorsTrend}>
-              <CartesianGrid vertical={false} stroke="var(--border)" />
-              <XAxis dataKey="day" {...axis} /><YAxis {...axis} />
-              <Tooltip {...tip} />
-              <Area dataKey="errors" stroke="var(--destructive)" fill="var(--destructive)" fillOpacity={0.15} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </Panel>
 
         <Panel title="Max-iterations hit rate" desc="% of requests that hit the iteration limit">
           <ResponsiveContainer width="100%" height={240}>
